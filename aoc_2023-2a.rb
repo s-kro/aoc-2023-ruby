@@ -9,17 +9,12 @@ MAX_CUBES = {
 
 total = File.readlines('aoc_2023-2.dat').each.sum do |line|
   valid_game = true
-  s = line.split(": ")
-  s[1].split("; ").each do |game|
-    game.split(", ").each do |cubes|
-      c = cubes.match /^(\d+) (red|green|blue)$/
-      if c[1].to_i > MAX_CUBES[c[2]]
-        valid_game = false
-        break 
-      end
-    end
+  game, rounds = line.split(": ")
+  rounds.split(/; |, /).each do |cubes| # split on both at the same time
+    cube = cubes.match /^(\d+) (red|green|blue)$/
+    valid_game = cube[1].to_i > MAX_CUBES[cube[2]] ? false : valid_game
   end
-  g = s[0].match /^Game (\d+)$/
+  g = game.match /^Game (\d+)$/
   valid_game ? g[1].to_i : 0
 end
 

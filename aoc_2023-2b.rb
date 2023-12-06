@@ -8,12 +8,10 @@ total = File.readlines('aoc_2023-2.dat').each.sum do |line|
     'green' => 0, # the story
     'blue'  => 0 }
 
-  s = line.split(": ")
-  s[1].split("; ").each do |game| # could have split on both ; and , at
-    game.split(", ").each do |cubes| # the same time, not sure if this is 
-      c = cubes.match /^(\d+) (red|green|blue)$/ # possible
-      min_cubes[c[2]] = [c[1].to_i, min_cubes[c[2]]].max
-    end
+  game, rounds = line.split(": ")
+  rounds.split(/; |, /).each do |cubes| # split on both '; ' and ', ' at
+    cube = cubes.match /^(\d+) (red|green|blue)$/ # the same time, as the actual
+    min_cubes[cube[2]] = [cube[1].to_i, min_cubes[cube[2]]].max # 'round' is irrelivant
   end
   min_cubes['red'] * min_cubes['green'] * min_cubes['blue']
 end
