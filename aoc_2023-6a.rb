@@ -4,8 +4,6 @@
 # Time:        54     70     82     75
 # Distance:   239   1142   1295   1253
 
-
-
 RACE = {
   '54' => 239,
   '70' => 1142,
@@ -18,7 +16,6 @@ RACE.each do |time, dist|
     time.to_i * t - t ** 2 > dist ? 1 : 0
   end
   total *= rec
-
 end
 
 puts("Number of ways to beat the race records: #{total}")
