@@ -5,17 +5,17 @@
 require 'rb_heap'
 
 def next_node()
-  {'N' => {'p' => [-1, 0], # [y, x] !
-           'd' => {'l' => 'W', 's' => 'N', 'r' => 'E'}},
+  {'^' => {:p => [-1, 0], # [y, x] !
+           :d => {:l => '<', :s => '^', :r => '>'}},
      
-   'E' => {'p' => [0, 1],
-           'd' => {'l' => 'N', 's' => 'E', 'r' => 'S'}},
+   '>' => {:p => [0, 1],
+           :d => {:l => '^', :s => '>', :r => 'v'}},
 
-   'S' => {'p' => [1, 0],
-           'd' => {'l' => 'E', 's' => 'S', 'r' => 'W'}},
+   'v' => {:p => [1, 0],
+           :d => {:l => '>', :s => 'v', :r => '<'}},
 
-   'W' => {'p' => [0, -1],
-           'd' => {'l' => 'S', 's' => 'W', 'r' => 'N'}}}
+   '<' => {:p => [0, -1],
+           :d => {:l => 'v', :s => '<', :r => '^'}}}
 end
 
 LM = [] # lava cooling map
@@ -28,7 +28,7 @@ W = LM[0].length - 1 # map width
 L = LM.length    - 1 # ... and length
 
 checked = Set.new
-Q = Heap.new {|a, b| (a <=> b) == -1} << [0, [0, 0], 'S'] << [0, [0, 0], 'E']
+Q = Heap.new {|a, b| (a <=> b) == -1} << [0, [0, 0], 'v'] << [0, [0, 0], '>']
 
 while !Q.empty?
   hl, p, d = Q.pop
@@ -36,16 +36,16 @@ while !Q.empty?
   (checked.include? [p, d]) ? next : checked << [p, d]
 
   pd = d.chars[-1] # previous direction "from"
-  np = [p, next_node[pd]['p']].transpose.map(&:sum) # next position
+  np = [p, next_node[pd][:p]].transpose.map(&:sum) # next position
 
   if np[0].between?(0, L) && np[1].between?(0, W) && d.chars.length <= 10 
   then
     hl += LM[np[0]][np[1]] # heat loss
 
-    %w[l s r].each do |t| # turns: left, straight, right
-      nd =  next_node[pd]['d'][t] # next direction
-      rd = t == 's' ? d + nd : nd
-      next if (t != 's'|| np == [L, W]) && d.chars.length < 4
+    [:l, :s, :r].each do |t| # turns: left, straight, right
+      nd =  next_node[pd][:d][t] # next direction
+      rd = t == :s ? d + nd : nd
+      next if (t != :s || np == [L, W]) && d.chars.length < 4
       if np == [L, W] then # must exit on a minimum straight run
         puts hl
         return
