@@ -4,19 +4,17 @@
 
 require 'rb_heap'
 
-def next_node()
-  {'^' => {:p => [-1, 0], # [y, x] !
-           :d => {:l => '<', :s => '^', :r => '>'}},
+NN = {'^' => {:p => [-1, 0], # [y, x] ! Next Node
+              :d => {:l => '<', :s => '^', :r => '>'}},
      
-   '>' => {:p => [0, 1],
-           :d => {:l => '^', :s => '>', :r => 'v'}},
+      '>' => {:p => [0, 1],
+              :d => {:l => '^', :s => '>', :r => 'v'}},
 
-   'v' => {:p => [1, 0],
-           :d => {:l => '>', :s => 'v', :r => '<'}},
+      'v' => {:p => [1, 0],
+              :d => {:l => '>', :s => 'v', :r => '<'}},
 
-   '<' => {:p => [0, -1],
-           :d => {:l => 'v', :s => '<', :r => '^'}}}
-end
+      '<' => {:p => [0, -1],
+              :d => {:l => 'v', :s => '<', :r => '^'}}}
 
 LM = [] # lava cooling map
 
@@ -36,14 +34,14 @@ while !Q.empty?
   (checked.include? [p, d]) ? next : checked << [p, d]
 
   pd = d.chars[-1] # previous direction "from"
-  np = [p, next_node[pd][:p]].transpose.map(&:sum) # next position
+  np = [p, NN[pd][:p]].transpose.map(&:sum) # next position
 
   if np[0].between?(0, L) && np[1].between?(0, W) && d.chars.length <= 3 
   then
     hl += LM[np[0]][np[1]] # heat loss
 
     [:l, :s, :r].each do |t| # turns: left, straight, right
-      nd =  next_node[pd][:d][t] # next direction
+      nd =  NN[pd][:d][t] # next direction
       rd = t == :s ? d + nd : nd
       if np == [L, W] then 
         puts hl
